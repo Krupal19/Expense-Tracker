@@ -77,123 +77,147 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextField(
-            controller: _titleController,
-            autofocus: false,
-            maxLength: 50,
-            decoration: const InputDecoration(
-              labelText: "Title",
-              focusColor: Colors.deepPurpleAccent,
-              border: OutlineInputBorder(
-                gapPadding: 5,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefix: Text(
-                      "\u20B9 ",
-                      style: TextStyle(
-                        color: Colors.deepPurpleAccent,
+    return LayoutBuilder(builder: (ctx, constraints) {
+      final width = constraints.maxWidth;
+      return SizedBox(
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+            // padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 12),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (width >= 600)
+                  Row(
+                    children: [
+                      TextField(
+                        controller: _titleController,
+                        autofocus: false,
+                        maxLength: 50,
+                        decoration: const InputDecoration(
+                          labelText: "Title",
+                          focusColor: Colors.deepPurpleAccent,
+                          border: OutlineInputBorder(
+                            gapPadding: 5,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    labelText: "Amount",
-                    border: OutlineInputBorder(
-                      gapPadding: 5,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                    ),
-                  ),
+                      const SizedBox(width: 24),
+                    ],
+                  )
+                else
+                const Divider(
+                  thickness: 3,
+                  indent: 150,
+                  endIndent: 150,
+                  color: Color(0xFF8A99A2),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                const SizedBox(height: 10),
+                Row(
                   children: [
-                    Text(_selectedDate == null
-                        ? "No date selected:"
-                        : formatter.format(_selectedDate!)),
-                    IconButton(
-                      onPressed: _presentDatePicker,
-                      icon: const Icon(Icons.calendar_month),
-                    )
+                    Expanded(
+                      child: TextField(
+                        controller: _amountController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          prefix: Text(
+                            "\u20B9 ",
+                            style: TextStyle(
+                              color: Colors.deepPurpleAccent,
+                            ),
+                          ),
+                          labelText: "Amount",
+                          border: OutlineInputBorder(
+                            gapPadding: 5,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(_selectedDate == null
+                              ? "No date selected:"
+                              : formatter.format(_selectedDate!)),
+                          IconButton(
+                            onPressed: _presentDatePicker,
+                            icon: const Icon(Icons.calendar_month),
+                          )
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          DropdownButtonFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.white24, width: 2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.white24, width: 2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-            ),
-            value: _selectedCategory,
-            borderRadius: BorderRadius.circular(12),
-            autofocus: false,
-            items: Category.values
-                .map(
-                  (category) => DropdownMenuItem(
-                    value: category,
-                    child: Text(category.name.toString()),
+                const SizedBox(height: 20),
+                DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white24, width: 2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white24, width: 2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
                   ),
+                  value: _selectedCategory,
+                  borderRadius: BorderRadius.circular(12),
+                  autofocus: false,
+                  items: Category.values
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category.name.toString()),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _submitExpenseDate();
+                        },
+                        child: const Text("Save Expense"),
+                      ),
+                    ),
+                  ],
                 )
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCategory = value!;
-              });
-            },
+              ],
+            ),
           ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Cancel"),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    _submitExpenseDate();
-                  },
-                  child: const Text("Save Expense"),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }
