@@ -97,6 +97,7 @@ class _ExpensesState extends State<Expenses> {
           'Expenses Tracker',
           style: Theme.of(context).textTheme.titleLarge,
         ),
+        // centerTitle: false,
         actions: [
           IconButton(
             onPressed: _openAddExpenseOverlay,
